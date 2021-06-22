@@ -1,0 +1,92 @@
+minikube start
+minikube start --cpus=4 --memory=8gb --disk-size=5000mb
+				-p hyo 	-создать миникуб с именем hyo
+minikube stop
+minikube delete
+minikube ssh  - попадаем в терминал миникуба
+minikube exit	- выход из имникуба
+
+kubectl describe pods hello		= показывает информатию о поде с названием hello
+kubectl -it exec hello sh		= попадаем внутрь пода под названием hello (-it = интерактивно) sh = запускаем шелл
+
+kubectl delete pods hello		= удаляет под hello
+
+kubectl run hello --generator=run-pod/v1 --image=nginx --port=80	= создание пода через консоль с названием hello и контейнером nginx
+kubectl port-forward hello 7788:80		= откроет его в порту 7788 , можно набрать в браузере 127.0.0.1:7788  и там будет находится данный под
+
+kubectl create -f my.yaml	= создасть из манифеста my.yaml
+kubectl apply -f my.yaml	= создаст если нет или обновит объекты если они есть
+kubectl delete pod my.yaml	= удалит поды созданные с помощью манифеста my.yaml
+kubectl delete pod my		= удалит под с именем my
+kubectl delete --all		= удалит все поды
+
+kubectl get replicaset		= отобразит replicaset
+kubectl get rs				= то же самое только с сокращением
+
+kubectl scale --replicas=2 replicaset my-rep	= если был запущен репликасет my-rep с какимто значением replicaset, то он изменит его на 2
+
+kubectl get pod --show-labels	= покажет в дополнение к камому labels они принадлежат
+
+kubectl cluster-info
+
+kubectl proxy
+curl http://localhost:8001/version
+
+
+это из учебника
+kubectl create deployment hello-minikube --image=k8s.gcr.io/echoserver:1.10
+kubectl expose deployment hello-minikube --type=NodePort --port=8080
+minikube service hello-minikube --url	= покажет адрес можно открыть в браузере
+
+minikube addons list
+minikube dashboard
+minikube addons enable metallb
+eval $(minikube docker-env)
+
+kubectl apply -f metallb-config.yaml
+kubectl describe configmaps -n metallb-system
+kubectl edit configmap config -n metallb-system
+
+kubectl exec $POD_NAME env
+kubectl exec --stdin --tty pod-name -- /bin/bash
+
+##################################################
+apk add openrc --no-cache     = для rc-service
+/etc/init.d/httpd start
+rc-service httpd start
+
+netstat -tulpn
+###################################################
+ps aux | grep nginx
+  263 root       0:00 nginx: master process /usr/sbin/nginx -c /etc/nginx/nginx.conf
+  264 www        0:00 nginx: worker process
+  310 root       0:00 grep nginx
+###################################################
+192.168.99.100
+
+kubectl edit pod wordpress-5994d99f46-l8xpz    = useful
+kubectl get pod -o wide
+
+CMD ["nginx", "-g", "daemon off;"]
+
+echo 'Qjd3SXRZbEhlUlIx' | base64 --decode
+
+echo -n 'admin' | base64
+YWRtaW4=
+
+mysql -h vtgate-zone1 -P 3306
+
+ps au     = список запущенных программ
+kill 123  = второй аргумент это пид программы есть еще опции (kill -9 123) опция 9 это немедленное завершение программы, 
+            по умолчанию идет опция SIGTERM (запрашивает остановку работы процесса он может быть проигннорирован)
+pkill nginx   = второй аргумент это имя процесса
+
+supervisorctl status nginx
+
+mkfifo run/mysqld/mysqld.sock = sozdanie socket
+
+
+echo $(kubectl get pod influxdb-5c76677d8d-g84pt --template={{.status.podIP}})
+
+lftp -d -u <username> 192.168.49.3
+set ssl:verify-certificate no              = это для lftp чтоб не проверял ключи
