@@ -1,5 +1,8 @@
 # multiserver
-Собрать и запустить мультисервер: `setup.sh`
+This script will setup all applications: `./setup.sh`
+```
+minikube
+```
 ```
 Docker
 Kubernetes
@@ -13,17 +16,23 @@ FTPS
 Grafana
 InfluxDB
 ```
-Кластер собран на minikube; Управляет и запускает контейнеры Docker - Kubernetes; Для каждого контейнера написан Dokerfile; Контейнеры собранны на базе Alpine Linux; Для всех серверов один IP адресс;
+```
+supervisor
+telegraf
+```
+Each server runs in a separate container. Containers built using Alpine Linux. Dockerfile is written for each container. Load Balancer have a single ip. 
 
-WordPress - веб-сайт, работает с базой данных MySQL(расположен в другом контейнере). Уже имеет при сборке контейнера нескольких пользователей и администратора. Собран на NGINX.
+WordPress - website listening on port 5050, which work with a MySQL database. Both services run in separate containers. The WordPress website have several users and an administrator. Wordpress have own nginx server.
 
-phpMyAdmin - веб-приложение, связан с контейнером MySQL. Собран на NGINX.
+phpMyAdmin - listening on port 5000 and linked with the MySQL database. PhpMyAdmin have own nginx server.
 
-NGINX - веб-сервер слушает 80 и 443 порты. 80 порт делает редирект на 443.  
-IP/wordpress делает redirect WordPress  
-IP/phpmyadmin делает reverse proxy PhpMyAdmin
+nginx - server listening on ports 80 and 443. Port 80 have redirection of type 301 to 443.
+This container allow access to a /wordpress route that makes a redirect 307 to IP:WPPORT.
+It also allow access to /phpmyadmin with a reverse proxy to IP:PMAPORT.
 
-Grafana - платформа для монитора контейнеров, связан с базой данных InfluxDB(расположен в другом контейнере). Для сбора метрик в каждом контейнере установлен `tegeraf`. Уже имеет настроенный при сборке контейнера dashboard.
+Grafana - platform, listening on port 3000, linked with an InfluxDB database. Grafana monitoring all containers. Already has a dashboard configured when building the container. InfluxDB and grafana are in two distincts containers.
 
-В случае сбоя или остановки одного из двух контейнеров базы данных, данные не теряются. Все контейнеры умеют перезапускаться в случае сбоя или остановки одной из его составных частей.(`supervisor`) FTPS, Grafana, Wordpress, PhpMyAdmin и NGINX - являются LoadBalancer. Influxdb и MySQL - являются ClusterIP.
+If one of the two database containers crashes or stops, the data is not deleted. All containers are able to restart in the event of a failure or stoppage of one of its component parts.  
+
+FTPS, Grafana, Wordpress, PhpMyAdmin and NGINX - LoadBalancer. Influxdb and MySQL - ClusterIP.
 ![server](https://github.com/hyoghurt/services/raw/master/server.png)
